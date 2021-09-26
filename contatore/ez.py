@@ -41,7 +41,7 @@ async def cummingtonite():
         oggi = date.today()
         grimasti-=1
         print("Giorno cominciato")
-        if oggi not in vacanze or oggi.weekday!=6 or oggi.month!=6:
+        if oggi not in vacanze and oggi.weekday!=6 and oggi.month!=6:
             messdelgiorno=dialoghi[randint(0,len(dialoghi)-1)]
             messdelgiorno+="\n  \nGiorni rimasti: "+str(effgr)+"\nMesi: "+str(int(grimasti/30))+"\nSettimane: "+str(int(grimasti/7))+"\nSecondi: "+str(grimasti*24*60*60)+"\nGiorni totali: "+str(grimasti)
             effgr-=1
