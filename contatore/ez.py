@@ -12,8 +12,8 @@ client = TelegramClient("contatore", API_ID, API_HASH)
 
 client.parse_mode = "md"
 messdelgiorno = ""
-idgruppo=contatori.idgruppo 
-dialoghi = contatori.dialoghi
+idgruppo=contatori.IDGRUPPO
+dialoghi = contatori.DIALOGHI
 
 natale = date(2021, 12, 25)
 grimasti = (contatori.FINESCUOLA - date.today()).days
@@ -40,9 +40,9 @@ async def checkday():
     oggi = date.today()
     grimasti -= 1
     gpassati += 1
-    if oggi == contatori.Compleanno:
+    if oggi == contatori.COMPLEANNO:
         await client.send_message(idgruppo, "Auguri!")
-    elif oggi == contatori.natale:
+    elif oggi == natale:
         await client.send_message(idgruppo, "Buon natale!")
     elif oggi == contatori.FINESCUOLA:
         await client.send_message(idgruppo, "è finita finalmente")
