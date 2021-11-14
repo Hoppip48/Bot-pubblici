@@ -1,65 +1,67 @@
+from datetime import date
 from telethon import TelegramClient
-from datetime import date, time
 import datetime
-import time
 from random import randint
+import contatori
+import asyncio
+import aiocron
 
-idez = "qui metti tuo id"
-hashid = "qui metti tuo hashid"
-client = TelegramClient("Allah", idez, hashid)
-finescuola=date(2022,6,21)
+API_ID = contatori.API_ID
+API_HASH = contatori.API_HASH
+client = TelegramClient("contatore", API_ID, API_HASH)
 
 client.parse_mode = "md"
-messdelgiorno=""
-idcontatore="qui metti id del canale/gruppo/user a cui vuoi che vada il messaggio"
-dialoghi = ["Qui metti", "i buongiorni","verranno scelti", "randomicamente"]
+messdelgiorno = ""
+idgruppo=contatori.idgruppo 
+dialoghi = contatori.dialoghi
 
-vacanze=[date(2021,11,1),date(2021,12,8),date(2022,4,17),date(2022,4,18),date(2022,4,25),date(2022,5,2)]
-for i in range((date(2022,1,7)-date(2021,12,22)).days):
-    vacanze+=[date(2021,12,22)+datetime.timedelta(days=i)]
-oggi = date.today()
-natale=date(2021,12,25)
-grimasti=(finescuola-oggi).days
-effgr=grimasti
+natale = date(2021, 12, 25)
+grimasti = (contatori.FINESCUOLA - date.today()).days
+gpassati = (date.today() - contatori.INIZIO).days
+effgr = grimasti
+vacanze = [date(2021, 11, 1), date(2021, 12, 8), date(2022, 4, 17), date(2022, 4, 18), date(2022, 4, 25),
+           date(2022, 5, 2)]
+for i in range((date(2022, 1, 7) - date(2021, 12, 22)).days):
+    vacanze += [date(2021, 12, 22) + datetime.timedelta(days=i)]
 for i in range(grimasti):
-    giorniliberali = (oggi + datetime.timedelta(days=i)).weekday()
-    if giorniliberali == 6 or giorniliberali in vacanze:
-        effgr-=1
+    giorniliberali = date.today() + datetime.timedelta(days=i)
+    if giorniliberali.weekday == 6 or giorniliberali in vacanze:
+        effgr -= 1
 
-print((finescuola-oggi).days)
 
-async def cummingtonite():
-    global oggi
+@aiocron.crontab('0 7 * * *')
+async def checkday():
     global grimasti
+    global gpassati
     global effgr
     global messdelgiorno
-    a=datetime.datetime("qui metti la data e ora dove vuoi che cominci a contare, es: 2021,8,19,7,0,0 (y,m,d,h,m,s)")
-    b=datetime.datetime.today()
-    print((a-b).seconds)
-    time.sleep((a-b).seconds)
-    while grimasti>0:
-        oggi = date.today()
-        grimasti-=1
-        print("Giorno cominciato")
-        if oggi not in vacanze and oggi.weekday!=6 and oggi.month!=6:
-            messdelgiorno=dialoghi[randint(0,len(dialoghi)-1)]
-            messdelgiorno+="\n  \nGiorni rimasti: "+str(effgr)+"\nMesi: "+str(int(grimasti/30))+"\nSettimane: "+str(int(grimasti/7))+"\nSecondi: "+str(grimasti*24*60*60)+"\nGiorni totali: "+str(grimasti)
-            effgr-=1
-            await client.send_message(idcontatore, messdelgiorno)
-        elif (oggi-natale).days>0:
-            await client.send_message(idcontatore, "Oggi è domenica, o come mi piace chiamarla, "+str((natale-oggi).days)+" giorni a natale")
-        elif oggi == natale:
-            await client.send_message(idcontatore, "Natale")
-        elif oggi==finescuola:
-            await client.send_message(idcontaatore, "Buon AmumuDay cowboys")
-        time.sleep(24*60*60)
+    global idkkk
+    global idcontatore
+    oggi = date.today()
+    grimasti -= 1
+    gpassati += 1
+    if oggi == contatori.Compleanno:
+        await client.send_message(idgruppo, "Auguri!")
+    elif oggi == contatori.natale:
+        await client.send_message(idgruppo, "Buon natale!")
+    elif oggi == contatori.FINESCUOLA:
+        await client.send_message(idgruppo, "è finita finalmente")
+        client.close()
+    elif oggi.weekday() == 6:
+        await client.send_message(idgruppo, "buona domenica")
+    elif oggi not in vacanze:
+        messdelgiorno = dialoghi[randint(0, len(dialoghi) - 1)]
+        messdelgiorno += "\n  \nGiorni di scuola rimasti: " + str(effgr) + "\nGiorni passati: " + str(
+            int(gpassati)) + "\nSettimane rimaste: " + str(int(grimasti / 7)) + "\nGiorni totali rimasti: " + str(
+            grimasti)
+        effgr -= 1
+        await client.send_message(idgruppo, messdelgiorno)
 
 
 def main():
-    print("mammt")
     client.start()
-    client.loop.run_until_complete(cummingtonite())
+    print("connesso")
+    asyncio.get_event_loop().run_forever()
 
-
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
